@@ -9,7 +9,7 @@ custom:
         dockerizePip: false
         pythonBin: venv/bin/python
     # you will need to use yours from https://serverlessrepo.aws.amazon.com/applications/arn:aws:serverlessrepo:us-east-1:145266761615:applications~ffmpeg-lambda-layer
-    npBaseLayer: arn:aws:lambda:us-east-1:575386350854:layer:ffmpeg:1
+    ffmpegBaseLayer: arn:aws:lambda:us-east-1:575386350854:layer:ffmpeg:1
 
 provider:
     name: aws
@@ -50,7 +50,7 @@ functions:
                           - Arn
                   batchSize: 1
         layers:
-            - ${self:custom.npBaseLayer}
+            - ${self:custom.ffmpegBaseLayer}
 
 resources:
     Resources:
