@@ -1,0 +1,67 @@
+service: yt2tg
+
+plugins:
+    - serverless-python-requirements
+    - serverless-dotenv-plugin
+
+custom:
+    pythonRequirements:
+        dockerizePip: false
+        pythonBin: venv/bin/python
+    # you will need to use yours from https://serverlessrepo.aws.amazon.com/applications/arn:aws:serverlessrepo:us-east-1:145266761615:applications~ffmpeg-lambda-layer
+    npBaseLayer: arn:aws:lambda:us-east-1:575386350854:layer:ffmpeg:1
+
+provider:
+    name: aws
+    runtime: python3.7
+    stage: dev
+    region: us-east-1
+    environment:
+        TASK_QUEUE: ${self:service}-${opt:stage, self:provider.stage}-queue
+        TELEGRAM_TOKEN: ${env:TELEGRAM_TOKEN}
+        CUTTLY_API_KEY: ${env:CUTTLY_API_KEY}
+    iamRoleStatements:
+        - Effect: "Allow"
+          Action:
+              - sqs:SendMessage
+              - sqs:GetQueueUrl
+              - sqs:ListQueues
+          Resource:
+              - { "Fn::GetAtt": ["TaskQueue", "Arn"] }
+
+functions:
+    trigger:
+        handler: handler.enqueue
+        memorySize: 128
+        events:
+            - http:
+                  path: webhook
+                  method: post
+                  cors: true
+    transfer_file:
+        handler: handler.transfer
+        memorySize: 2048
+        timeout: 900 # 15 mins
+        events:
+            - sqs:
+                  arn:
+                      Fn::GetAtt:
+                          - TaskQueue
+                          - Arn
+                  batchSize: 1
+        layers:
+            - ${self:custom.npBaseLayer}
+
+resources:
+    Resources:
+        TaskQueue:
+            Type: "AWS::SQS::Queue"
+            Properties:
+                QueueName: ${self:provider.environment.TASK_QUEUE}
+                VisibilityTimeout: 900 # seconds
+
+package:
+    exclude:
+        - venv/**
+        - node_modules/**
+        - __pycache__/**

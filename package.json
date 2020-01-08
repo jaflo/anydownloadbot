@@ -1,0 +1,12 @@
+{
+	"name": "yt2tg",
+	"version": "1.0.0",
+	"description": "Telegram bot to get videos and audio from online",
+	"author": "",
+	"license": "MIT",
+	"dependencies": {
+		"serverless": "^1.46.0",
+		"serverless-dotenv-plugin": "^2.1.1",
+		"serverless-python-requirements": "^4.3.0"
+	}
+}
