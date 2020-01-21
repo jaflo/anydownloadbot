@@ -12,7 +12,7 @@ You can use the hosted version by chatting with [@AnyDownloadBot](http://t.me/An
 
 ## Installation
 
-Install [serverless](https://serverless.com) and fill in your [Telegram token](https://core.telegram.org/bots#6-botfather) and [cutt.ly API keys](https://cutt.ly/cuttly-api) in the `.env` file.
+Install [serverless](https://serverless.com) and fill in your [Telegram token](https://core.telegram.org/bots#6-botfather) and [cutt.ly API key](https://cutt.ly/cuttly-api) in the `.env` file.
 
 Deploy the [ffmpeg-lambda-layer AWS Lambda layer](https://serverlessrepo.aws.amazon.com/applications/arn:aws:serverlessrepo:us-east-1:145266761615:applications~ffmpeg-lambda-layer) and update the `ffmpegBaseLayer` property in the `serverless.yml` file.
 

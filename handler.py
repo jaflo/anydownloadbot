@@ -121,6 +121,21 @@ def transfer(event, context):
         except:
             was_successful = False
 
+        if was_successful:
+            filename = max(glob.glob("/tmp/*." + codec), key=os.path.getctime)
+            filesize = os.path.getsize(filename)
+            # 50 MB is Telegram's limit (as of Jan 2020)
+            if filesize < 50*1000*1000:
+                response = requests.post(BASE_URL + "/send" + output_type,
+                                         files={output_type: open(
+                                             filename, "rb")},
+                                         data={
+                                             "supports_streaming": True,
+                                             "chat_id": chat_id,
+                                             "reply_to_message_id": message_id
+                                         })
+                return "Success!"
+
         media_url = None
         with youtube_dl.YoutubeDL({
             "quiet": True,
@@ -134,22 +149,7 @@ def transfer(event, context):
                 "short": media_url
             }).json()["url"]["shortLink"]
 
-        # 50 MB is Telegram's limit (as of Jan 2020)
-        if was_successful:
-            filename = max(glob.glob("/tmp/*." + codec), key=os.path.getctime)
-            filesize = os.path.getsize(filename)
-            if filesize < 50*1000*1000:
-                response = requests.post(BASE_URL + "/send" + output_type,
-                                         files={output_type: open(
-                                             filename, "rb")},
-                                         data={
-                                             "supports_streaming": True,
-                                             "caption": "Also available at {}".format(media_url),
-                                             "chat_id": chat_id,
-                                             "reply_to_message_id": message_id
-                                         })
-            return "Success!"
-        elif media_url:
+        if media_url:
             data.update({
                 "text": "I can't send the file directly, but you can try downloading it here: {}".format(media_url)
             })
