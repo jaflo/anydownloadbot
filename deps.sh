@@ -7,5 +7,4 @@ release=$(curl https://yt-dl.org | grep -Eo 'downloads[^\"]+gz')
 curl -sL https://yt-dl.org/$release -o youtube-dl.tar.gz
 
 tar -xf youtube-dl.tar.gz
-mv youtube-dl-*/youtube_dl youtube_dl
-rm -rf youtube-dl.tar.gz youtube-dl-*
+mv youtube-dl*/youtube_dl youtube_dl
