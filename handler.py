@@ -162,8 +162,6 @@ def transfer(event, context):
             "text": "An error occurred while retrieving the file:\n```{}```".format(str(e).strip()),
             "parse_mode": "markdown"
         })
-        requests.post(BASE_URL + "/sendMessage", data)
-        raise e
 
     requests.post(BASE_URL + "/sendMessage", data)
     return "Couldn't extract."
